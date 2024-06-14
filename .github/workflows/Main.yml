@@ -19,7 +19,7 @@ jobs:
         echo "::set-output name=buildconfig::$(echo $json)"
     - name: Show Server Variables
       run: |
-        echo "JSON: ${{ fromJson(steps.read-json.outputs) }}"
+        echo "JSON: ${{ fromJson(steps.read-json.outputs.buildconfig) }}"
 
 
   Call-Env1_Build:
