@@ -14,10 +14,10 @@ jobs:
 
 
 
-    
+
     - name: Show file content
       run: |
-          Get-Content data.json
+          Get-Content config.json
         
     - name: Read and Parse JSON
       run: |
