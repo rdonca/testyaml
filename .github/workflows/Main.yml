@@ -17,9 +17,10 @@ jobs:
       run: |
         $json = Get-Content .\config.json | ConvertFrom-Json
         echo "::set-output name=buildconfig::$(echo $json)"
+
     - name: Show Server Variables
       run: |
-        echo "JSON: ${{ fromJson(steps.read-json.outputs.buildconfig) }}"
+        echo "JSON: ${{ fromJson(steps.read-json.outputs.buildconfig).product }}"
 
 
   Call-Env1_Build:
