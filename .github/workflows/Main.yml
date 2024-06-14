@@ -16,7 +16,7 @@ jobs:
       shell: pwsh
       run: |
         $json = Get-Content .\config.json | ConvertFrom-Json
-        echo "::set-output name=buildconfig::$(echo $json.prop)"
+        echo "::set-output name=buildconfig::$(echo $json.product)"
     - name: Show Server Variables
       run: |
         echo "JSON: ${{ steps.read-json.outputs }}"
