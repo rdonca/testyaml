@@ -36,8 +36,7 @@ jobs:
       id: read-json
       shell: pwsh
       run: |
-        $json = Get-Content -Raw .\config.json | ConvertFrom-Json
-        echo "::set-output name=buildconfig::$(echo $json)"
+        echo "::set-output name=buildconfig::$(Get-Content .\config.json -Raw)"
 
     - name: Show Server Variables
       run: |
