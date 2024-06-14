@@ -14,7 +14,7 @@ jobs:
       id: read-json
       shell: pwsh
       run: |
-        $json = Get-Content ./config.json | ConvertFrom-Json
+        $json = Get-Content config.json | ConvertFrom-Json
         echo "::set-output name=buildconfig::$(echo $json.prop)"
   
   Call-Env1_Build:
