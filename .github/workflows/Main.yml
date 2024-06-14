@@ -1,0 +1,32 @@
+name: Test Json parsing
+
+on:
+  push
+
+jobs:  
+  Variables:  
+    runs-on: windows-2019
+    outputs:
+      buildconfig: ${{ steps.read-json.outputs.buildconfig }}
+      
+    steps:
+    - name: Read json
+      id: read-json
+      shell: pwsh
+      run: |
+        $json = Get-Content config.json | ConvertFrom-Json
+        echo "::set-output name=buildconfig::$(echo $json.prop)"
+  
+  Call-Env1_Build:
+    needs: Variables
+    uses: ./.github/workflows/Env1_Build.yml
+    with:
+        buildenv: ${{ needs.Variables.outputs.buildconfig }}
+    secrets: inherit
+
+  Call-Env2_Build:
+      needs: Variables
+      uses: ./.github/workflows/Env2_Build.yml
+      with:
+          buildenv: ${{ needs.Variables.outputs.buildconfig }}
+      secrets: inherit
