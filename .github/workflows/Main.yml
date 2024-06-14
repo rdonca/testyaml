@@ -17,7 +17,11 @@ jobs:
       run: |
         $json = Get-Content .\config.json | ConvertFrom-Json
         echo "::set-output name=buildconfig::$(echo $json.prop)"
-  
+    - name: Show Server Variables
+      run: |
+        echo "JSON: ${{ steps.read-json.outputs }}"
+
+
   Call-Env1_Build:
     needs: Variables
     uses: ./.github/workflows/Env1_Build.yml
