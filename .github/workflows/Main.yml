@@ -40,7 +40,9 @@ jobs:
 
     - name: Show Server Variables
       run: |
-        echo "JSON: ${{ steps.read-json.outputs.buildconfig.name }}"
+        $json = ConvertFrom-Json -InputObject "${{ steps.read-json.outputs.buildconfig }}"
+        $nameAttribute = $json.name
+        Write-Output "Json Name: $nameAttribute"
 
 
   Call-Env1_Build:
