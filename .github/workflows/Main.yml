@@ -21,12 +21,12 @@ jobs:
     needs: Variables
     uses: ./.github/workflows/Env1_Build.yml
     with:
-        buildenv: ${{ needs.Variables.outputs.buildconfig }}
+        buildconfig: ${{ needs.Variables.outputs.buildconfig }}
     secrets: inherit
 
   Call-Env2_Build:
       needs: Variables
       uses: ./.github/workflows/Env2_Build.yml
       with:
-          buildenv: ${{ needs.Variables.outputs.buildconfig }}
+          buildconfig: ${{ needs.Variables.outputs.buildconfig }}
       secrets: inherit
