@@ -11,6 +11,27 @@ jobs:
       
     steps:
     - uses: actions/checkout@v3
+
+
+
+    
+    - name: Show file content
+      run: |
+          Get-Content data.json
+        
+    - name: Read and Parse JSON
+      run: |
+          try {
+            $json = Get-Content -Raw config.json | ConvertFrom-Json
+            Write-Output "Parsed JSON: $($json | ConvertTo-Json -Depth 100)"
+          } catch {
+            Write-Error "Error parsing JSON: $_"
+          }
+
+
+
+
+
     - name: Read json
       id: read-json
       shell: pwsh
