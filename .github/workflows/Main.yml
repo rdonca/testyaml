@@ -20,7 +20,7 @@ jobs:
 
     - name: Show Server Variables
       run: |
-        echo "JSON: ${{ fromJson(steps.read-json.outputs.buildconfig).product }}"
+        echo "JSON: ${{ fromJson(steps.read-json.outputs.buildconfig).name }}"
 
 
   Call-Env1_Build:
