@@ -1,0 +1,56 @@
+name: Test Json parsing
+
+on:
+  push
+
+jobs:  
+  Variables:  
+    runs-on: windows-2019
+    outputs:
+      buildconfig: ${{ steps.read-json.outputs.buildconfig }}
+      
+    steps:
+    - uses: actions/checkout@v3
+
+
+
+
+    - name: Set up PowerShell
+      uses: actions/setup-powershell@v1
+
+    - name: Run PowerShell script to get server version
+      id: get_version
+      run: |
+        $filePath = 'path/to/your.json'
+          $serverName = 'tweb'
+          $variableName = 'SERVER_VERSION'
+          ./get-server-version.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
+      shell: pwsh
+  
+
+
+    - name: Show Server Variables
+      run: |
+        run: echo "The server version is ${{ steps.get_version.outputs.server_version }}"
+
+    - name: Set server version as environment variable
+      run: echo "${{ steps.get_version.outputs.SERVER_VERSION }}" >> $GITHUB_ENV
+
+    - name: Use the server version
+      run: echo "The server version is $SERVER_VERSION"
+      
+
+
+  Call-Env1_Build:
+    needs: Variables
+    uses: ./.github/workflows/Env1_Build.yml
+    with:
+        buildconfig: ${{ needs.Variables.outputs.buildconfig }}
+    secrets: inherit
+
+  Call-Env2_Build:
+      needs: Variables
+      uses: ./.github/workflows/Env2_Build.yml
+      with:
+          buildconfig: ${{ needs.Variables.outputs.buildconfig }}
+      secrets: inherit

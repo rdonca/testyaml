@@ -1,11 +1,31 @@
 {
-  "name": "John Doe",
-  "age": 30,
-  "city": "New York",
-  "isStudent": false,
-  "grades": [85, 90, 88],
-  "address": {
-    "street": "123 Main St",
-    "zipCode": "10001"
-  }
+  "Applications":[
+    "LinkReview",
+    "FRM",
+    "AutoReminder",
+    "UpdateQuotaRecount",
+    "LookUpTables"    
+  ],
+  "servers": [
+    {
+      "stg": {
+        "version": 6,
+        "apps": [
+          "LinkReview",
+          "FRM",
+          "AutoReminder"
+        ]
+      }
+    },
+    {
+      "tweb": {
+        "version": 7.5,
+        "apps": [
+          "LinkReview",
+          "FRM",
+          "AutoReminder"
+        ]
+      }
+    }
+  ]
 }
