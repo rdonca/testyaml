@@ -14,31 +14,29 @@ jobs:
 
 
 
-
-    - name: Set up PowerShell
-      uses: actions/setup-powershell@v1
+    
 
     - name: Run PowerShell script to get server version
       id: get_version
       run: |
-        $filePath = 'path/to/your.json'
+        $filePath = 'config.json'
           $serverName = 'tweb'
-          $variableName = 'SERVER_VERSION'
-          ./get-server-version.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
+          $variableName = 'srvVersion'
+          pwsh ./get-server-version.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
       shell: pwsh
   
 
 
     - name: Show Server Variables
       run: |
-        run: echo "The server version is ${{ steps.get_version.outputs.server_version }}"
+        run: echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
 
     - name: Set server version as environment variable
-      run: echo "${{ steps.get_version.outputs.SERVER_VERSION }}" >> $GITHUB_ENV
+      run: echo "${{ steps.get_version.outputs.srvVersion }}" >> $GITHUB_ENV
 
     - name: Use the server version
       run: echo "The server version is $SERVER_VERSION"
-      
+
 
 
   Call-Env1_Build:
