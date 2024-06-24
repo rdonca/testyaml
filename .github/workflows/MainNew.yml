@@ -29,7 +29,7 @@ jobs:
 
     - name: Show Server Variables
       run: |
-        run: echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
+          echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
 
     - name: Set server version as environment variable
       run: |
