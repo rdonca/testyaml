@@ -32,14 +32,16 @@ jobs:
 
   Call-Env1_Build:
     needs: Variables
-    uses: ./.github/workflows/Env1_Build.yml
+    if: ${{ needs.Variables.outputs.srvVersion == '6' }}
+    uses: ./.github/workflows/Env6_Build.yml
     with:
         serverVersion: ${{ needs.Variables.outputs.serverVersion }}
     secrets: inherit
 
   Call-Env2_Build:
       needs: Variables
-      uses: ./.github/workflows/Env2_Build.yml
+      if:  ${{ needs.Variables.outputs.srvVersion == '75' }}
+      uses: ./.github/workflows/Env75_Build.yml
       with:
           serverVersion: ${{ needs.Variables.outputs.serverVersion }}
       secrets: inherit
