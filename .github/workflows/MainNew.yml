@@ -7,7 +7,7 @@ jobs:
   Variables:  
     runs-on: windows-2019
     outputs:
-      buildconfig: ${{ steps.read-json.outputs.buildconfig }}
+      serverVersion: ${{ steps.get_version.outputs.srvVersion }}
       
     steps:
     - uses: actions/checkout@v3
@@ -23,7 +23,7 @@ jobs:
   
     - name: Show Server Variables
       run: |
-          echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
+          echo "The 'srvVersion' server version is ${{ steps.get_version.outputs.srvVersion }}"
 
 
 
@@ -34,12 +34,12 @@ jobs:
     needs: Variables
     uses: ./.github/workflows/Env1_Build.yml
     with:
-        buildconfig: ${{ needs.Variables.outputs.buildconfig }}
+        serverVersion: ${{ needs.Variables.outputs.serverVersion }}
     secrets: inherit
 
   Call-Env2_Build:
       needs: Variables
       uses: ./.github/workflows/Env2_Build.yml
       with:
-          buildconfig: ${{ needs.Variables.outputs.buildconfig }}
+          serverVersion: ${{ needs.Variables.outputs.serverVersion }}
       secrets: inherit

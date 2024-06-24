@@ -3,7 +3,7 @@ name: Build Env1
 on:
   workflow_call:
     inputs:
-      buildconfig:
+      serverVersion:
         required: true
         type: string
       
@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     
-    - run: echo ${{ inputs.buildconfig }}
+    - run: echo ${{ inputs.serverVersion }}
