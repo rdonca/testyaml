@@ -37,7 +37,7 @@ jobs:
 
     - name: Use the server version
       run: |
-        echo "The server version is $SERVER_VERSION"
+        echo "The server version is $srvVersion"
 
 
 
