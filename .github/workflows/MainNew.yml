@@ -32,10 +32,12 @@ jobs:
         run: echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
 
     - name: Set server version as environment variable
-      run: echo "${{ steps.get_version.outputs.srvVersion }}" >> $GITHUB_ENV
+      run: |
+          echo "${{ steps.get_version.outputs.srvVersion }}" >> $GITHUB_ENV
 
     - name: Use the server version
-      run: echo "The server version is $SERVER_VERSION"
+      run: |
+        echo "The server version is $SERVER_VERSION"
 
 
 
