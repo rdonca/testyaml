@@ -22,7 +22,7 @@ jobs:
         $filePath = 'config.json'
           $serverName = 'tweb'
           $variableName = 'srvVersion'
-          pwsh ./get-server-version.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
+          pwsh ./getServerVersion.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
       shell: pwsh
   
 

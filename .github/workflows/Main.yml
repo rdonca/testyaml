@@ -1,7 +1,7 @@
 name: Test Json parsing
 
 on:
-  push
+  workflow_dispatch
 
 jobs:  
   Variables:  
