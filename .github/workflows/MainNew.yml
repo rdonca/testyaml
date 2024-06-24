@@ -12,32 +12,21 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-
-
-    
-
     - name: Run PowerShell script to get server version
       id: get_version
       run: |
         $filePath = 'config.json'
           $serverName = 'tweb'
           $variableName = 'srvVersion'
-          pwsh ./getServerVersion.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
+          pwsh ./.github/workflows/getServerVersion.ps1 -filePath $filePath -serverName $serverName -variableName $variableName
       shell: pwsh
   
-
-
     - name: Show Server Variables
       run: |
           echo "The server version is ${{ steps.get_version.outputs.srvVersion }}"
 
-    - name: Set server version as environment variable
-      run: |
-          echo "${{ steps.get_version.outputs.srvVersion }}" >> $GITHUB_ENV
 
-    - name: Use the server version
-      run: |
-        echo "The server version is $srvVersion"
+
 
 
 
