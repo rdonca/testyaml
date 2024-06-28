@@ -79,10 +79,10 @@ jobs:
             Write-Host "Found application: $app.Name"
 
             # Set outputs
-            echo "::set-output name=appPath::$app.Path"
-            echo "::set-output name=appProj::$app.Proj"
-            echo "::set-output name=appBuild::$app.Build"
-            echo "::set-output name=appConfig::$app.Config"
+            echo "::set-output name=appPath::$($app.Path)"
+            echo "::set-output name=appProj::$($app.Proj)"
+            echo "::set-output name=appBuild::$($app.Build)"
+            echo "::set-output name=appConfig::$($app.Config)"
         shell: pwsh   
 
       - name: Show Parameters
