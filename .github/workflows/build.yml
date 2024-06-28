@@ -49,7 +49,6 @@ jobs:
         echo "The 'github.run_number' server version is ${{ github.run_number }}"
 
   Call-BuildApps:
-    if: github.ref_name == 'dev' 
     needs: [Variables]
     uses: ./.github/workflows/app_build.yml
     with:
