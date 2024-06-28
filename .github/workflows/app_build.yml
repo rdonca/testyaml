@@ -26,13 +26,9 @@ jobs:
           echo "Applications input: $apps"
           $app_array = $apps -split ','
           echo "App array: $($app_array -join ', ')"
-          $matrix = @()
-          foreach ($app in $app_array) {
-            $matrix += @{ "application" = $app }
-          }
-          $matrix_json = ConvertTo-Json -InputObject $matrix -Compress
+          $matrix_object = @{ "apps" = $app_array }
+          $matrix_json = $matrix_object | ConvertTo-Json -Compress
           echo "Matrix JSON: $matrix_json"
-          echo "matrix=$matrix_json" >> $GITHUB_ENV
           echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
           
       - name: Display Matrix
@@ -54,8 +50,7 @@ jobs:
     needs: preprocess
     runs-on: windows-2019
     strategy:
-        matrix: 
-          application: [ "${{ fromJson(needs.preprocess.outputs.matrix) }}" ]
+        matrix: ${{ fromJson(needs.preprocess.outputs.matrix) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
