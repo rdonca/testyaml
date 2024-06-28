@@ -1,0 +1,59 @@
+name: SPSS
+on:
+  workflow_call:
+    inputs:
+      buildEnv:
+        required: true
+        type: string
+
+jobs:  
+  Variables:  
+    environment: 
+      name: ${{ inputs.buildenv }} 
+    runs-on: windows-2019   
+    outputs:
+      buildEnvironement: ${{ inputs.buildenv }}
+      buildVersion: ${{ steps.get_version.outputs.buildVersion }}
+      applications: ${{ steps.get_applications.outputs.appsList }}
+
+    steps:
+    - name: Get environement Dimension version 
+      id: get_version
+      run: |
+          $json = Get-Content config.json | ConvertFrom-Json
+          $version = ($json.servers | Where-Object { $_.${{ inputs.buildenv }} }).${{ inputs.buildenv }}.version
+          Write-Output "::set-output name=buildVersion::$version"
+
+    - name: Check script result and exit on failure
+      if: ${{ steps.get_version.outputs.srvVersion == '-none-' }}
+      run: |
+          echo "Environement '${{ inputs.buildenv }}' not found. Exiting workflow."
+          exit 1
+
+    - name: Get environement applications
+      id: get_applications
+      run: |
+        $json = Get-Content config.json | ConvertFrom-Json
+        $all_apps = ($json.servers | Where-Object { $_.${{ inputs.buildenv }} }).${{ inputs.buildenv }}.apps -join ","
+        Write-Output "::set-output name=appsList::$all_apps"
+  
+    - name: Show Server Apps
+      run: |
+          echo "The '${{ inputs.buildenv }}.apps' is ${{ steps.get_applications.outputs.appsList }}"
+    
+    - name: Show PARAMS
+      run: |
+        echo "The 'buildEnv' version is ${{ inputs.buildenv }}"
+        echo "The 'buildVersion' version is ${{ steps.get_version.outputs.buildVersion }}"
+        echo "The 'github.run_number' server version is ${{ github.run_number }}"
+
+  Call-BuildApps:
+    if: github.ref_name == 'dev' 
+    needs: [Variables]
+    uses: ./.github/workflows/app_build.yml
+    with:
+        buildenv: ${{ needs.Variables.outputs.buildEnvironement }}
+        buildVersion: ${{ needs.Variables.outputs.buildVersion }}
+        applications: ${{ needs.Variables.outputs.applications }}
+    secrets: inherit
+

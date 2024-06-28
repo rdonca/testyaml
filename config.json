@@ -1,15 +1,80 @@
 {
-  "Applications":[
-    "LinkReview",
-    "FRM",
-    "AutoReminder",
-    "UpdateQuotaRecount",
-    "LookUpTables"    
+  "Applications": [
+    {
+      "Name": "FRM",
+      "Path": "FieldReport\\FiedlReportMonitoring\\",
+      "Proj": "FieldReportMonitoring.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "FRMService",
+      "Path": "FieldReport\\ClientLinkGenerationQueue\\",
+      "Proj": "ClientLinkGenerationQueue.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "FRMCS",
+      "Path": "FieldReport\\FRMClientService\\",
+      "Proj": "FRMClientService.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "SpssDataUpdateQuotaRecount",
+      "Path": "SpssDataUpdateQuotaRecount\\SpssDataUpdateQuotaRecount\\",
+      "Proj": "SpssDataUpdateQuotaRecount.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "SpssUpdateDataActivity",
+      "Path": "SpssUpdateDataActivitie\\",
+      "Proj": "SpssUpdateDataActivitie.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "AutoReminder",
+      "Path": "AutoReminderSpss\\AutoReminderSpss\\",
+      "Proj": "AutoReminderSpss.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "LinkReview",
+      "Path": "LinkReview\\",
+      "Proj": "LinkReview.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "TestLoginWA6",
+      "Path": "TestLoginWA\\",
+      "Proj": "",
+      "Build": "false",
+      "Config": ""
+    },
+    {
+      "Name": "LookUpTable",
+      "Path": "LookUpTable\\ManageLookUpTables\\",
+      "Proj": "ManageLookUpTables.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    },
+    {
+      "Name": "LookUpTablesActivity",
+      "Path": "LookUpTable\\LookUpTablesActivity2\\",
+      "Proj": "LookUpTablesActivity.csproj",
+      "Build": "true",
+      "Config": "Deploy"
+    }
   ],
   "servers": [
     {
       "stg": {
-        "version": 6,
+        "version": 6.0,
         "apps": [
           "LinkReview",
           "FRM",
@@ -21,9 +86,9 @@
       "tweb": {
         "version": 7.5,
         "apps": [
-          "LinkReview",
           "FRM",
-          "AutoReminder"
+          "AutoReminder",
+          "LookUpTables"
         ]
       }
     }

@@ -1,0 +1,132 @@
+name: Build and Pack
+
+on:
+  workflow_call:
+    inputs:
+      buildenv:
+        required: true
+        type: string
+      buildVersion:
+        required: true
+        type: string
+      applications:
+        required: true
+        type: string
+
+jobs:
+  preprocess:
+    runs-on: windows-2019
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set up the matrix
+        id: set-matrix
+        run: |
+          $apps = '${{ inputs.applications }}'
+          echo "Applications input: $apps"
+          $app_array = $apps -split ','
+          echo "App array: $($app_array -join ', ')"
+          $matrix = @()
+          foreach ($app in $app_array) {
+            $matrix += @{ "application" = $app }
+          }
+          $matrix_json = ConvertTo-Json -InputObject $matrix -Compress
+          echo "Matrix JSON: $matrix_json"
+          echo "matrix=$matrix_json" >> $GITHUB_ENV
+          echo "::set-output matrix=$matrix_json"
+          
+      - name: Display Matrix
+        run: |
+          echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
+       
+  build_and_pack00:
+            needs: preprocess
+            runs-on: windows-2019
+            steps:
+              - name: Show Parameters
+                run: |
+                  echo "The 'matrix' :${{ fromJson(needs.preprocess.outputs.matrix) }}"        
+             
+
+
+  build_and_pack:
+    needs: preprocess
+    runs-on: windows-2019
+    strategy:
+        matrix: 
+          application: [ "${{ fromJson(needs.preprocess.outputs.matrix) }}" ]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.1
+
+
+        
+      - name: Get application parameters
+        id: get_app_params
+        run: |
+            $json = Get-Content -Raw -Path config.json | ConvertFrom-Json
+            $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
+  
+            echo "appPath=$app.Path" >> $GITHUB_ENV
+            echo "appProj=$app.Proj" >> $GITHUB_ENV
+            echo "appBuild=$app.Build" >> $GITHUB_ENV
+            echo "appConfig=$app.Config" >> $GITHUB_ENV
+        shell: pwsh   
+
+      - name: Show Parameters
+        run: |
+          echo "The 'Name' : ${{ matrix.application }}"
+          echo "The 'Path' : ${{ steps.get_app_params.outputs.appPath }}"
+          echo "The 'Proj' : ${{ steps.get_app_params.outputs.appProj }}"
+          echo "The 'Build' : ${{ steps.get_app_params.outputs.appBuild }}"
+          echo "The 'Config' : ${{ steps.get_app_params.outputs.appConfig }}"
+
+
+
+
+
+
+
+#   BuildAndPack:
+#     environment: 
+#       name: ${{ inputs.buildenv }} 
+#     runs-on: windows-2019
+#     steps:
+#     - uses: actions/checkout@v3
+    
+#     - name: Add msbuild to PATH.
+#       uses: microsoft/setup-msbuild@v1.1
+
+    
+
+#     - name: Show Parameters
+#       run: |
+#           echo "The 'Name' : ${{ inputs.application }}"
+#           echo "The 'Path' : ${{ steps.get_app_params.outputs.appPath }}"
+#           echo "The 'Proj' : ${{ steps.get_app_params.outputs.appProj }}"
+#           echo "The 'Build' : ${{ steps.get_app_params.outputs.appBuild }}"
+#           echo "The 'Config' : ${{ steps.get_app_params.outputs.appConfig }}"
+
+
+#     - name: Publish
+#       id: app_publish
+#       run: |
+#         msbuild .\v${{ inputs.buildVersion }}\FieldReport\FiedlReportMonitoring\FieldReportMonitoring.csproj /p:Configuration=Release /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:publishUrl=.\publish\
+    
+#     - name: Zip
+#       id: app_zip
+#       if: ${{ steps.app_publish.outcome == 'success'}}
+#       shell: pwsh
+#       run : | 
+#         Compress-Archive .\v${{ inputs.buildVersion }}\FieldReport\FiedlReportMonitoring\publish\* ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}.zip
+  
+#     - name: Upload Artifact
+#       id: app_upload
+#       uses: actions/upload-artifact@v3
+#       with:
+#         name: ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}
+#         path: ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}.zip
+#         retention-days: 1
