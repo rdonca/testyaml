@@ -27,7 +27,7 @@ jobs:
           $matrix_object = @{ "apps" = $app_array }
           $matrix_json = $matrix_object | ConvertTo-Json -Compress
           echo "Matrix JSON: $matrix_json"
-          echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
+          echo "matrix=$matrix_json" >> $env:GITHUB_ENV
           
       - name: Display Matrix
         run: |
