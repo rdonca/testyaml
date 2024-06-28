@@ -41,6 +41,12 @@ jobs:
             needs: preprocess
             runs-on: windows-2019
             steps:
+              - name: Use Matrix Output
+                shell: pwsh
+                run: |
+                  $matrix = '${{ needs.preprocess.outputs.matrix }}'
+                  echo "Matrix from previous job: $matrix"
+
               - name: Show Parameters
                 run: |
                   echo "The 'matrix' :${{ needs.preprocess.outputs.matrix }}"     
