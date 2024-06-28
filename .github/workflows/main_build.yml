@@ -1,0 +1,23 @@
+name: Build "tweb" env
+
+on:
+  workflow_dispatch:
+
+jobs:
+  Variables:
+    runs-on: windows-2019
+    outputs:
+      buildEnv: ${{ steps.set_env.outputs.buildEnv }}
+    steps:
+      - name: Set environment variable
+        id: set_env
+        run: |
+          $buildEnv = "buildEnv=tweb"
+          echo $buildEnv >> $env:GITHUB_OUTPUT
+
+  Call-Main_Build:
+    needs: Variables
+    uses: ./.github/workflows/main_build.yml
+    with:
+      buildEnv: ${{ needs.Variables.outputs.buildEnv }}
+    secrets: inherit
