@@ -31,7 +31,7 @@ jobs:
           
       - name: Display Matrix
         run: |
-          echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
+          echo "Matrix: ${{ fromJson(steps.set-matrix.outputs.matrix) }}"
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
