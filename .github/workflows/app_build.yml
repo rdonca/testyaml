@@ -34,7 +34,7 @@ jobs:
           echo "Matrix: $env:matrix"
 
     outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
+      matrix: $env:matrix
 
 
   build_and_pack00:
