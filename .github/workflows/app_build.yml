@@ -19,6 +19,7 @@ jobs:
     steps:
       - name: Set up the matrix
         id: set-matrix
+        shell: pwsh
         run: |
           $apps = '${{ inputs.applications }}'
           echo "Applications input: $apps"
@@ -30,6 +31,7 @@ jobs:
           echo "matrix=$matrix_json" | Out-File -FilePath $env:GITHUB_ENV -Append
           
       - name: Display Matrix
+        shell: pwsh
         run: |
           echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
 
