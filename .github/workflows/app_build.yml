@@ -33,7 +33,7 @@ jobs:
           $matrix_json = ConvertTo-Json -InputObject $matrix -Compress
           echo "Matrix JSON: $matrix_json"
           echo "matrix=$matrix_json" >> $GITHUB_ENV
-          echo "::set-output matrix=$matrix_json"
+          echo "matrix=$matrix_json" >> $GITHUB_OUTPUT
           
       - name: Display Matrix
         run: |
@@ -45,6 +45,7 @@ jobs:
             steps:
               - name: Show Parameters
                 run: |
+                  echo "The 'matrix' :${{ needs.preprocess.outputs.matrix }}"     
                   echo "The 'matrix' :${{ fromJson(needs.preprocess.outputs.matrix) }}"        
              
 
