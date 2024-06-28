@@ -17,6 +17,7 @@ jobs:
       applications: ${{ steps.get_applications.outputs.appsList }}
 
     steps:
+    - uses: actions/checkout@v3
     - name: Get environement Dimension version 
       id: get_version
       run: |
