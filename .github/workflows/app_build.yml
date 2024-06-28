@@ -68,18 +68,18 @@ jobs:
       - name: Show matrix params
         shell: pwsh
         run: |
-          Write-Host "The 'Matrix param' : ${{ matrix.application }}"
+          Write-Host "The 'Matrix name' : ${{ matrix.application }}"
 
       - name: Get application parameters
         id: get_app_params
         run: |
-            $json = Get-Content -Raw -Path config.json | ConvertFrom-Json
-            $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
-  
-            echo "::set-output name=appPath::$app.Path"
-            echo "::set-output name=appProj::$app.Proj"
-            echo "::set-output name=appBuild::$app.Build"
-            echo "::set-output name=appConfig::$app.Config"
+          $json = Get-Content -Raw -Path config.json | ConvertFrom-Json
+          $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
+
+          echo "::set-output name=appPath::$app.Path"
+          echo "::set-output name=appProj::$app.Proj"
+          echo "::set-output name=appBuild::$app.Build"
+          echo "::set-output name=appConfig::$app.Config"
         shell: pwsh   
 
       - name: Show Parameters
