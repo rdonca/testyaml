@@ -17,7 +17,7 @@ jobs:
 
   Call-Main_Build:
     needs: Variables
-    uses: ./.github/workflows/main_build.yml
+    uses: ./.github/workflows/build.yml
     with:
       buildEnv: ${{ needs.Variables.outputs.buildEnv }}
     secrets: inherit
