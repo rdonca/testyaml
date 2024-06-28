@@ -27,11 +27,11 @@ jobs:
           $matrix_object = @{ "apps" = $app_array }
           $matrix_json = $matrix_object | ConvertTo-Json -Compress
           echo "Matrix JSON: $matrix_json"
-          echo "matrix=$matrix_json" >> $env:GITHUB_ENV
+          echo "matrix=$matrix_json" | Out-File -FilePath $env:GITHUB_ENV -Append
           
       - name: Display Matrix
         run: |
-          echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
+          echo "Matrix: $env:matrix"
 
     outputs:
       matrix: ${{ steps.set-matrix.outputs.matrix }}
