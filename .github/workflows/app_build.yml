@@ -76,10 +76,10 @@ jobs:
             $json = Get-Content -Raw -Path config.json | ConvertFrom-Json
             $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
   
-            echo "appPath=$app.Path" >> $GITHUB_ENV
-            echo "appProj=$app.Proj" >> $GITHUB_ENV
-            echo "appBuild=$app.Build" >> $GITHUB_ENV
-            echo "appConfig=$app.Config" >> $GITHUB_ENV
+            echo "::set-output name=appPath::$app.Path"
+            echo "::set-output name=appProj::$app.Proj"
+            echo "::set-output name=appBuild::$app.Build"
+            echo "::set-output name=appConfig::$app.Config"
         shell: pwsh   
 
       - name: Show Parameters
