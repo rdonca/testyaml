@@ -56,13 +56,19 @@ jobs:
     needs: preprocess
     runs-on: windows-2019
     strategy:
-        matrix: ${{ fromJson(needs.preprocess.outputs.matrix) }}
+        matrix: 
+          application: ${{ fromJson(needs.preprocess.outputs.matrix).apps }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
       - name: Add msbuild to PATH
         uses: microsoft/setup-msbuild@v1.1
+
+      - name: Show matrix params
+        shell: pwsh
+        run: |
+          Write-Host "The 'Matrix param' : ${{ matrix.application }}"
 
       - name: Get application parameters
         id: get_app_params
