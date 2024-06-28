@@ -31,10 +31,10 @@ jobs:
           
       - name: Display Matrix
         run: |
-          echo "Matrix: $env:matrix"
+          echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
 
     outputs:
-      matrix: $env:matrix
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
 
 
   build_and_pack00:
