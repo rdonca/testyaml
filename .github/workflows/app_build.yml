@@ -46,7 +46,7 @@ jobs:
               - name: Show Parameters
                 run: |
                   echo "The 'matrix' :${{ needs.preprocess.outputs.matrix }}"     
-                  echo "The 'matrix' :${{ fromJson(needs.preprocess.outputs.matrix) }}"        
+#                  echo "The 'matrix' :${{ fromJson(needs.preprocess.outputs.matrix) }}"        
              
 
 
