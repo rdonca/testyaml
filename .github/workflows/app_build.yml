@@ -74,12 +74,15 @@ jobs:
         id: get_app_params
         run: |
           $json = Get-Content -Raw -Path config.json | ConvertFrom-Json
-          $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
+            $app = $json.Applications | Where-Object { $_.Name -eq "${{ matrix.application }}" }
+  
+            Write-Host "Found application: $app.Name"
 
-          echo "::set-output name=appPath::$app.Path"
-          echo "::set-output name=appProj::$app.Proj"
-          echo "::set-output name=appBuild::$app.Build"
-          echo "::set-output name=appConfig::$app.Config"
+            # Set outputs
+            echo "::set-output name=appPath::$app.Path"
+            echo "::set-output name=appProj::$app.Proj"
+            echo "::set-output name=appBuild::$app.Build"
+            echo "::set-output name=appConfig::$app.Config"
         shell: pwsh   
 
       - name: Show Parameters
