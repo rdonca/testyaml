@@ -16,45 +16,41 @@ on:
 jobs:
   preprocess:
     runs-on: windows-2019    
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
     steps:
       - name: Set up the matrix
         id: set-matrix
         shell: pwsh
         run: |
           $apps = '${{ inputs.applications }}'
-          echo "Applications input: $apps"
+          Write-Host "Applications input: $apps"
           $app_array = $apps -split ','
-          echo "App array: $($app_array -join ', ')"
+          Write-Host "App array: $($app_array -join ', ')"
           $matrix_object = @{ "apps" = $app_array }
           $matrix_json = $matrix_object | ConvertTo-Json -Compress
-          echo "Matrix JSON: $matrix_json"
-          echo "matrix=$matrix_json" | Out-File -FilePath $env:GITHUB_ENV -Append
+          Write-Host "Matrix JSON: $matrix_json"
+          echo "::set-output name=matrix::$matrix_json"
           
       - name: Display Matrix
         shell: pwsh
         run: |
           echo "Matrix: ${{ steps.set-matrix.outputs.matrix }}"
 
-    outputs:
-      matrix: ${{ steps.set-matrix.outputs.matrix }}
-
-
   build_and_pack00:
-            needs: preprocess
-            runs-on: windows-2019
-            steps:
-              - name: Use Matrix Output
-                shell: pwsh
-                run: |
-                  $matrix = '${{ needs.preprocess.outputs.matrix }}'
-                  echo "Matrix from previous job: $matrix"
+    needs: preprocess
+    runs-on: windows-2019
+    steps:
+      - name: Use Matrix Output
+        shell: pwsh
+        run: |
+          $matrix = '${{ needs.preprocess.outputs.matrix }}'
+          Write-Host "Matrix from preprocess job: $matrix"
 
-              - name: Show Parameters
-                run: |
-                  echo "The 'matrix' :${{ needs.preprocess.outputs.matrix }}"     
-#                  echo "The 'matrix' :${{ fromJson(needs.preprocess.outputs.matrix) }}"        
-             
-
+      - name: Show Parameters
+        shell: pwsh
+        run: |
+          Write-Host "The 'Matrix' : ${{ needs.preprocess.outputs.matrix }}"
 
   build_and_pack:
     needs: preprocess
@@ -89,50 +85,3 @@ jobs:
           echo "The 'Proj' : ${{ steps.get_app_params.outputs.appProj }}"
           echo "The 'Build' : ${{ steps.get_app_params.outputs.appBuild }}"
           echo "The 'Config' : ${{ steps.get_app_params.outputs.appConfig }}"
-
-
-
-
-
-
-
-#   BuildAndPack:
-#     environment: 
-#       name: ${{ inputs.buildenv }} 
-#     runs-on: windows-2019
-#     steps:
-#     - uses: actions/checkout@v3
-    
-#     - name: Add msbuild to PATH.
-#       uses: microsoft/setup-msbuild@v1.1
-
-    
-
-#     - name: Show Parameters
-#       run: |
-#           echo "The 'Name' : ${{ inputs.application }}"
-#           echo "The 'Path' : ${{ steps.get_app_params.outputs.appPath }}"
-#           echo "The 'Proj' : ${{ steps.get_app_params.outputs.appProj }}"
-#           echo "The 'Build' : ${{ steps.get_app_params.outputs.appBuild }}"
-#           echo "The 'Config' : ${{ steps.get_app_params.outputs.appConfig }}"
-
-
-#     - name: Publish
-#       id: app_publish
-#       run: |
-#         msbuild .\v${{ inputs.buildVersion }}\FieldReport\FiedlReportMonitoring\FieldReportMonitoring.csproj /p:Configuration=Release /p:Platform=AnyCPU /t:WebPublish /p:WebPublishMethod=FileSystem /p:DeleteExistingFiles=True /p:publishUrl=.\publish\
-    
-#     - name: Zip
-#       id: app_zip
-#       if: ${{ steps.app_publish.outcome == 'success'}}
-#       shell: pwsh
-#       run : | 
-#         Compress-Archive .\v${{ inputs.buildVersion }}\FieldReport\FiedlReportMonitoring\publish\* ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}.zip
-  
-#     - name: Upload Artifact
-#       id: app_upload
-#       uses: actions/upload-artifact@v3
-#       with:
-#         name: ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}
-#         path: ${{ inputs.buildenv }}_${{ inputs.application }}v${{ inputs.buildVersion }}.${{ inputs.currentbranch }}.${{ inputs.packageversion }}.zip
-#         retention-days: 1
