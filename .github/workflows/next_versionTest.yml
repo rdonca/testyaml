@@ -45,9 +45,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
-    - name: Build Insight Installer
+    - name: Calculate new version
       uses: ./.github/actions/next-version
-      id: build
+      id: calculate-version
       with:
         currentBranch: ${{ github.ref_name }}
         versionFilePath: version.txt
@@ -55,7 +55,7 @@ jobs:
         shouldIncrementMinor: false
     
     - name: Show the determined version
-      run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"
+      run: echo "New version is ${{ steps.calculate-version.outputs.newVersionNumber }}"
       shell: pwsh
 
     - name: Update version.txt file
@@ -65,7 +65,7 @@ jobs:
         $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
         
         # Get the new version from the previous step
-        $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
+        $newVersion = "${{ steps.calculate-version.outputs.newVersionNumber }}"
         
         # Write the new version to the file
         Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
@@ -78,7 +78,7 @@ jobs:
       shell: pwsh
       run: |
         $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
-        $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
+        $newVersion = "${{ steps.calculate-version.outputs.newVersionNumber }}"
         Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
         Write-Output "Updated version.txt with: $newVersion"
 
@@ -96,7 +96,7 @@ jobs:
           # Check if there are changes to commit
           $changes = git status --porcelain
           if ($changes) {
-            git commit -m "Bump version to ${{ steps.build.outputs.newVersionNumber }} [skip ci]"
+            git commit -m "Bump version to ${{ steps.calculate-version.outputs.newVersionNumber }} [skip ci]"
             git push origin HEAD:${{ github.ref_name }}
             Write-Host "::set-output name=committed::true"
           } else {
@@ -112,3 +112,19 @@ jobs:
           } else {
             Write-Host "No changes were committed"
           }
+
+    - name: Create and push version tag
+      if: success()  # Only tag if commit succeeded
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      shell: pwsh
+      run: |
+        $newVersion = "${{ steps.calculate-version.outputs.newVersionNumber }}"
+        
+        # Create annotated tag (better practice than lightweight)
+        git tag -a "v$newVersion" -m "Version $newVersion"
+        
+        # Push the tag
+        git push origin "v$newVersion"
+        
+        Write-Host "Successfully created and pushed tag v$newVersion"
