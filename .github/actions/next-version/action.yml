@@ -43,8 +43,10 @@ runs:
             $revision = if ($versionParts.Count -gt 3) { [int]$versionParts[3] } else { 0 }
 
             if ($branch -eq "master") {
+                Write-Output "MASTER branch"
                 if ($incrementMajor) {
                     # Master branch + major increment
+                    Write-Output "MASTER branch -> increment MAJOR, reset MINOR, PATCH, REVISION"
                     $major++
                     $minor = 0
                     $patch = 0
@@ -52,22 +54,26 @@ runs:
                 }
                 elseif ($incrementMinor) {
                     # Master branch + minor increment
+                    Write-Output "MASTER branch -> increment MINOR, reset PATCH, REVISION"
                     $minor++
                     $patch = 0
                     $revision = 0
                 }
                 else {
                     # Master branch + patch increment
+                    Write-Output "MASTER branch -> increment PATCH, reset REVISION"
                     $patch++
                     $revision = 0
                 }
             }
             elseif ($branch -like "release/*") {
                 # Release branch - increment revision only
+                Write-Output "RELESE branch -> increment REVISION"
                 $revision++
             }
             else {
                 # Other branches - don't modify version
+                Write-Output "$currentVersion branch -> nothing"
                 return $currentVersion
             }
 
