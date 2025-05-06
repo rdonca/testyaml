@@ -47,10 +47,10 @@ jobs:
       uses: ./.github/actions/next-version
       id: build
       with:
-        currentBranch: ${{ vars.BUILD_TYPE }}
-        versionFilePath: ${{ vars.CER_THUMBPRINT }}
-        shouldIncrementMajor: "" 
-        shouldIncrementMinor: "true"
+        currentBranch: ${{ github.ref_name }}
+        versionFilePath: version.txt
+        shouldIncrementMajor: ${{ contains(github.ref, 'master') && github.event_name == 'workflow_dispatch' }}
+        shouldIncrementMinor: ${{ contains(github.ref, 'master') && github.event_name == 'workflow_dispatch' }}
     
     - name: Show the determined version
       run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"

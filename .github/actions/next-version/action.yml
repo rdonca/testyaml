@@ -16,8 +16,8 @@ inputs:
     default: 'false'
 outputs:
   newVersionNumber:
-    value: ${{ steps.version.outputs.newVersionNumber }}
     description: 'The new version'
+    value: ${{ steps.version.outputs.newVersionNumber }}
 runs:
   using: 'composite'
   steps:
@@ -28,28 +28,80 @@ runs:
       id: version
       shell: pwsh
       run: |
-        function Get-InsightVersion {
-            # Use the GITHUB_WORKSPACE environment variable to get the repository root directory
-            $repoRootDir = $env:GITHUB_WORKSPACE
-
-            # Point directly to the version.txt in the root of the repo
-            $versionFilePath = Join-Path -Path $repoRootDir -ChildPath "version.txt"
+        function Get-NextVersion {
+            param(
+                [string]$currentVersion,
+                [string]$branch,
+                [bool]$incrementMajor,
+                [bool]$incrementMinor
+            )
             
-            if (-not (Test-Path -Path $versionFilePath)) {
-                Write-Error "Version file not found at $versionFilePath"
-                return $null
+            $versionParts = $currentVersion.Split('.')
+            $major = [int]$versionParts[0]
+            $minor = [int]$versionParts[1]
+            $patch = [int]$versionParts[2]
+            $revision = if ($versionParts.Count -gt 3) { [int]$versionParts[3] } else { 0 }
+
+            if ($branch -eq "master") {
+                if ($incrementMajor) {
+                    # Master branch + major increment
+                    $major++
+                    $minor = 0
+                    $patch = 0
+                    $revision = 0
+                }
+                elseif ($incrementMinor) {
+                    # Master branch + minor increment
+                    $minor++
+                    $patch = 0
+                    $revision = 0
+                }
+                else {
+                    # Master branch + patch increment
+                    $patch++
+                    $revision = 0
+                }
+            }
+            elseif ($branch -like "release/*") {
+                # Release branch - increment revision only
+                $revision++
+            }
+            else {
+                # Other branches - don't modify version
+                return $currentVersion
             }
 
-            # Read the version from the file
-            $version = Get-Content -Path $versionFilePath -Raw
-            $version = $version.Trim()
-
-            return $version
+            # Return the appropriate version format
+            if ($branch -eq "master") {
+                return "$major.$minor.$patch"
+            }
+            else {
+                return "$major.$minor.$patch.$revision"
+            }
         }
 
-        # Call the function and output the result
-        $newVersion = Get-InsightVersion
-        Write-Output "New version is: $newVersion"
+        # Get current version
+        $versionFilePath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "version.txt"
+        
+        if (-not (Test-Path -Path $versionFilePath)) {
+            Write-Error "Version file not found at $versionFilePath"
+            exit 1
+        }
 
-        # Export output
+        $currentVersion = (Get-Content -Path $versionFilePath -Raw).Trim()
+        Write-Output "Current version: $currentVersion"
+
+        # Convert string inputs to boolean
+        $incMajor = "${{ inputs.shouldIncrementMajor }}" -eq 'true'
+        $incMinor = "${{ inputs.shouldIncrementMinor }}" -eq 'true'
+        $branch = "${{ inputs.currentBranch }}"
+
+        # Calculate next version
+        $newVersion = Get-NextVersion -currentVersion $currentVersion -branch $branch -incrementMajor $incMajor -incrementMinor $incMinor
+        Write-Output "New version: $newVersion"
+
+        # Update version file
+        Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
+
+        # Set output
         echo "newVersionNumber=$newVersion" >> $env:GITHUB_OUTPUT
