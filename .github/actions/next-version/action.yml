@@ -53,5 +53,8 @@ runs:
         $newVersion = Get-InsightVersion
         echo "Determined version: $newVersion"
 
+        # Debug output: Check value before exporting
+        echo "Debug: New version is: $newVersion"
+
         # Export output
         echo "newVersionNumber=$newVersion" >> $GITHUB_OUTPUT
