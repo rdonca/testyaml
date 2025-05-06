@@ -1,0 +1,54 @@
+name: Build Insight Installer
+inputs:
+  build_type:
+    required: true
+    type: string
+  cer_thumbprint:
+    required: false
+    type: string
+
+outputs:
+  artifact:
+    value: ${{ steps.get-artifact.outputs.filename }}
+
+runs:
+  using: "composite"
+  steps:
+  - name: Restore Dependencies
+    shell: pwsh
+    run: dotnet restore InsightSolution/Insight/Insight.csproj
+    
+  - name: Install Node.js
+    uses: actions/setup-node@v4
+    with:
+      node-version: latest
+    
+  - name: Install NPM dependencies  
+    shell: pwsh  
+    run: |
+      cd "InsightSolution\Insight\NpmJS"
+      npm install
+
+  - name: Run batch file
+    shell: pwsh
+    run: .\buildFlow.bat ${{ inputs.BUILD_TYPE }} ${{ inputs.cer_thumbprint }}
+
+  - name: Find and list files
+    shell: pwsh
+    run: |
+      echo "Listing publish folder for Insight_vXXXXXXXX.zip"
+      dir .\publish\Insight_v*.zip
+
+  - name: Set artifact ouput
+    id: get-artifact
+    shell: bash
+    run: |
+      file=$(ls publish/Insight_v*.zip | head -n 1)
+
+      if [[ -n "$file" ]]; then
+        echo "File found: $file"
+        echo "filename=$(basename "$file")" >> $GITHUB_OUTPUT
+      else
+        echo "No file found."
+      fi
+
