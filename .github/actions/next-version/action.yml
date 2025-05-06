@@ -71,23 +71,36 @@ runs:
                     $patch++
                     $revision = 0
                 }
-                $newVersion = "$major.$minor.$patch"
+                # Always include 4-digit revision for main/master branches
+                $newVersion = "$major.$minor.$patch.0000"
             }
             elseif ($branch -like "release/*") {
                 Write-Host "RELEASE branch detected"
                 $revision++
-                $newVersion = "$major.$minor.$patch.$revision"
+                # Format revision as 4 digits with leading zeros
+                $formattedRevision = "{0:D4}" -f $revision
+                $newVersion = "$major.$minor.$patch.$formattedRevision"
             }
             else {
                 Write-Host "Non-main/master, non-release branch detected. Version remains unchanged."
-                $newVersion = $currentVersion
+                if ($currentVersion -match '\.\d+$') {
+                    # If version has revision, format it to 4 digits
+                    $parts = $currentVersion.Split('.')
+                    $rev = [int]$parts[-1]
+                    $formattedRev = "{0:D4}" -f $rev
+                    $newVersion = "$($parts[0]).$($parts[1]).$($parts[2]).$formattedRev"
+                } else {
+                    # Add .0000 if no revision exists
+                    $newVersion = "$currentVersion.0000"
+                }
             }
 
             Write-Host "`nNew version parts:"
             Write-Host "Major: $major"
             Write-Host "Minor: $minor"
             Write-Host "Patch: $patch"
-            Write-Host "Revision: $revision`n"
+            Write-Host "Revision: $($newVersion.Split('.')[3])"
+            Write-Host "Final version: $newVersion`n"
 
             return $newVersion
         }
