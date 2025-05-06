@@ -28,14 +28,6 @@ runs:
       id: version
       shell: pwsh
       run: |
-        # Debug: Show all input values
-        Write-Output "=== DEBUG INPUT VALUES ==="
-        Write-Output "Current branch: ${{ inputs.currentBranch }}"
-        Write-Output "Version file path: ${{ inputs.versionFilePath }}"
-        Write-Output "Increment major: ${{ inputs.shouldIncrementMajor }}"
-        Write-Output "Increment minor: ${{ inputs.shouldIncrementMinor }}"
-        Write-Output "========================="
-
         function Get-NextVersion {
             param(
                 [string]$currentVersion,
@@ -44,8 +36,8 @@ runs:
                 [bool]$incrementMinor
             )
             
-            Write-Output "Processing version: $currentVersion on branch: $branch"
-            Write-Output "Increment major: $incrementMajor, Increment minor: $incrementMinor"
+            Write-Host "`n=== Processing version: $currentVersion on branch: $branch ==="
+            Write-Host "Increment major: $incrementMajor, Increment minor: $incrementMinor`n"
 
             $versionParts = $currentVersion.Split('.')
             $major = [int]$versionParts[0]
@@ -53,58 +45,62 @@ runs:
             $patch = [int]$versionParts[2]
             $revision = if ($versionParts.Count -gt 3) { [int]$versionParts[3] } else { 0 }
 
-            Write-Output "Current version parts: Major=$major, Minor=$minor, Patch=$patch, Revision=$revision"
+            Write-Host "Current version parts:"
+            Write-Host "Major: $major"
+            Write-Host "Minor: $minor"
+            Write-Host "Patch: $patch"
+            Write-Host "Revision: $revision`n"
 
-            if ($branch -eq "master") {
-                Write-Output "MASTER branch detected"
+            if ($branch -eq "main" -or $branch -eq "master") {
+                Write-Host "MAIN/MASTER branch detected"
                 if ($incrementMajor) {
-                    Write-Output "MAJOR version increment requested"
+                    Write-Host "MAJOR version increment requested"
                     $major++
                     $minor = 0
                     $patch = 0
                     $revision = 0
-                    Write-Output "New version parts: Major=$major, Minor=$minor, Patch=$patch, Revision=$revision"
                 }
                 elseif ($incrementMinor) {
-                    Write-Output "MINOR version increment requested"
+                    Write-Host "MINOR version increment requested"
                     $minor++
                     $patch = 0
                     $revision = 0
-                    Write-Output "New version parts: Major=$major, Minor=$minor, Patch=$patch, Revision=$revision"
                 }
                 else {
-                    Write-Output "PATCH version increment requested (default)"
+                    Write-Host "PATCH version increment requested (default)"
                     $patch++
                     $revision = 0
-                    Write-Output "New version parts: Major=$major, Minor=$minor, Patch=$patch, Revision=$revision"
                 }
+                $newVersion = "$major.$minor.$patch"
             }
             elseif ($branch -like "release/*") {
-                Write-Output "RELEASE branch detected"
+                Write-Host "RELEASE branch detected"
                 $revision++
-                Write-Output "REVISION increment only. New revision: $revision"
+                $newVersion = "$major.$minor.$patch.$revision"
             }
             else {
-                Write-Output "Non-master, non-release branch detected. Version remains unchanged."
-                return $currentVersion
+                Write-Host "Non-main/master, non-release branch detected. Version remains unchanged."
+                $newVersion = $currentVersion
             }
 
-            # Return the appropriate version format
-            if ($branch -eq "master") {
-                $newVersion = "$major.$minor.$patch"
-                Write-Output "Formatted master version: $newVersion"
-                return $newVersion
-            }
-            else {
-                $newVersion = "$major.$minor.$patch.$revision"
-                Write-Output "Formatted release version: $newVersion"
-                return $newVersion
-            }
+            Write-Host "`nNew version parts:"
+            Write-Host "Major: $major"
+            Write-Host "Minor: $minor"
+            Write-Host "Patch: $patch"
+            Write-Host "Revision: $revision`n"
+
+            return $newVersion
         }
 
-        # Get current version
+        Write-Host "=== DEBUG INPUT VALUES ==="
+        Write-Host "Current branch: ${{ inputs.currentBranch }}"
+        Write-Host "Version file path: ${{ inputs.versionFilePath }}"
+        Write-Host "Increment major: ${{ inputs.shouldIncrementMajor }}"
+        Write-Host "Increment minor: ${{ inputs.shouldIncrementMinor }}"
+        Write-Host "=========================`n"
+
         $versionFilePath = Join-Path -Path $env:GITHUB_WORKSPACE -ChildPath "${{ inputs.versionFilePath }}"
-        Write-Output "Looking for version file at: $versionFilePath"
+        Write-Host "Looking for version file at: $versionFilePath`n"
         
         if (-not (Test-Path -Path $versionFilePath)) {
             Write-Error "Version file not found at $versionFilePath"
@@ -112,26 +108,22 @@ runs:
         }
 
         $currentVersion = (Get-Content -Path $versionFilePath -Raw).Trim()
-        Write-Output "Current version from file: '$currentVersion'"
+        Write-Host "Current version from file: '$currentVersion'`n"
 
-        # Convert string inputs to boolean
         $incMajor = "${{ inputs.shouldIncrementMajor }}" -eq 'true'
         $incMinor = "${{ inputs.shouldIncrementMinor }}" -eq 'true'
         $branch = "${{ inputs.currentBranch }}"
 
-        Write-Output "Calculating next version with:"
-        Write-Output "  - Branch: $branch"
-        Write-Output "  - Increment major: $incMajor"
-        Write-Output "  - Increment minor: $incMinor"
+        Write-Host "Calculating next version with:"
+        Write-Host "- Branch: $branch"
+        Write-Host "- Increment major: $incMajor"
+        Write-Host "- Increment minor: $incMinor`n"
 
-        # Calculate next version
         $newVersion = Get-NextVersion -currentVersion $currentVersion -branch $branch -incrementMajor $incMajor -incrementMinor $incMinor
-        Write-Output "Final new version: '$newVersion'"
+        Write-Host "Final new version: '$newVersion'`n"
 
-        # Update version file
         Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
-        Write-Output "Version file updated successfully"
+        Write-Host "Version file updated successfully`n"
 
-        # Set output
         echo "newVersionNumber=$newVersion" >> $env:GITHUB_OUTPUT
-        Write-Output "Output variable set: newVersionNumber=$newVersion"
+        Write-Host "Output variable set: newVersionNumber=$newVersion`n"
