@@ -43,15 +43,12 @@ runs:
             $version = Get-Content -Path $versionFilePath -Raw
             $version = $version.Trim()
 
-            # Print the version explicitly to the console
-            Write-Output "Determined version: $version"
-
             return $version
         }
 
         # Call the function and output the result
         $newVersion = Get-InsightVersion
-        echo "Determined version: $newVersion"
+        Write-Output "New version is: $newVersion"
 
         # Debug output: Check value before exporting
         echo "Debug: New version is: $newVersion"
