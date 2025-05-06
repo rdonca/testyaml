@@ -42,3 +42,9 @@ runs:
             $version = Get-Content -Path $versionFilePath -Raw
             return $version.Trim()
         }
+        
+        $newVersion = Get-InsightVersion
+        echo "Determined version: $newVersion"
+
+        # Export output
+        echo "::set-output name=newVersionNumber::$newVersion"

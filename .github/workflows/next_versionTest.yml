@@ -51,3 +51,7 @@ jobs:
         versionFilePath: ${{ vars.CER_THUMBPRINT }}
         shouldIncrementMajor: "" 
         shouldIncrementMinor: ""
+    
+    - name: Show the determined version
+      run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"
+      shell: pwsh
