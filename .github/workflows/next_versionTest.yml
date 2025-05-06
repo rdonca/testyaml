@@ -55,3 +55,58 @@ jobs:
     - name: Show the determined version
       run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"
       shell: pwsh
+
+    - name: Update version.txt file
+      shell: pwsh
+      run: |
+        # Set the file path
+        $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
+        
+        # Get the new version from the previous step
+        $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
+        
+        # Write the new version to the file
+        Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
+        
+        # Verify the update
+        Write-Output "Updated version.txt with: $newVersion"
+        Get-Content -Path $versionFilePath
+
+        - name: Update version.txt file
+        shell: pwsh
+        run: |
+          $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
+          $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
+          Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
+          Write-Output "Updated version.txt with: $newVersion"
+  
+    - name: Commit version update
+      id: commit-version
+      shell: pwsh
+      run: |
+          # Configure git
+          git config --global user.name "GitHub Actions"
+          git config --global user.email "actions@github.com"
+          
+          # Stage the version file
+          git add version.txt
+          
+          # Check if there are changes to commit
+          $changes = git status --porcelain
+          if ($changes) {
+            git commit -m "Bump version to ${{ steps.build.outputs.newVersionNumber }} [skip ci]"
+            git push origin HEAD:${{ github.ref_name }}
+            Write-Output "::set-output name=committed::true"
+          } else {
+            Write-Output "::set-output name=committed::false"
+            Write-Output "No changes to commit"
+          }
+  
+    - name: Output commit status
+      shell: pwsh
+      run: |
+          if ("${{ steps.commit-version.outputs.committed }}" -eq "true") {
+            Write-Output "Version file was committed and pushed"
+          } else {
+            Write-Output "No changes were committed"
+          }
