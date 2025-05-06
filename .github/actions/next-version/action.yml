@@ -28,34 +28,17 @@ runs:
       shell: pwsh
       run: |
         function Get-InsightVersion {
-            # Go up one level from the current directory
-            $versionFilePath = Join-Path -Path (Split-Path -Parent ${{ inputs.scriptRoot }}) -ChildPath "version.txt"
+            # Get the directory of the current script
+            $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+            # Go up one level from the script's directory
+            $parentDir = Split-Path -Parent $scriptDir
+            $versionFilePath = Join-Path -Path $parentDir -ChildPath "version.txt"
             
             if (-not (Test-Path -Path $versionFilePath)) {
                 Write-Error "Version file not found at $versionFilePath"
                 return $null
             }
-            
+
             $version = Get-Content -Path $versionFilePath -Raw
-            
             return $version.Trim()
-        }
-
-        # Get current version
-        $current_version = Get-InsightVersion
-        if (-not $current_version) {
-            Write-Error "Failed to get current version"
-            exit 1
-        }
-        Write-Output "Current version: $current_version"
-
-        $branch = "${{ inputs.currentBranch }}"
-
-        if ($branch -eq "master" -or $branch -eq "main") {
-            Write-Output "Master/main branch detected - incrementing major version"
-           
-        }
-        elseif ($branch -like "release/*") {
-            Write-Output "Release branch detected - incrementing minor version"
-           
         }
