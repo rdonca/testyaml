@@ -53,5 +53,5 @@ jobs:
         shouldIncrementMinor: ""
     
     - name: Show the determined version
-      run: echo "New version is ${{ steps.version.outputs.newVersionNumber }}"
+      run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"
       shell: pwsh
