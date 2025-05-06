@@ -54,4 +54,4 @@ runs:
         echo "Determined version: $newVersion"
 
         # Export output
-        echo "::set-output name=newVersionNumber::$newVersion"
+        echo "newVersionNumber=$newVersion" >> $GITHUB_OUTPUT
