@@ -16,6 +16,7 @@ inputs:
     default: 'false'
 outputs:
   newVersionNumber:
+    value: ${{ steps.version.newVersionNumber }}
     description: 'The new version'
 runs:
   using: 'composite'
@@ -49,9 +50,6 @@ runs:
         # Call the function and output the result
         $newVersion = Get-InsightVersion
         Write-Output "New version is: $newVersion"
-
-        # Debug output: Check value before exporting
-        echo "Debug: New version is: $newVersion"
 
         # Export output
         echo "newVersionNumber=$newVersion" >> $GITHUB_OUTPUT
