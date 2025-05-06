@@ -36,6 +36,8 @@ jobs:
           
   build-windows:
     runs-on: windows-2019
+    permissions:
+      contents: write
     name: Windows Build Self-Hosted
     needs: determine_env
     environment: ${{ needs.determine_env.outputs.environment }}
@@ -96,17 +98,17 @@ jobs:
           if ($changes) {
             git commit -m "Bump version to ${{ steps.build.outputs.newVersionNumber }} [skip ci]"
             git push origin HEAD:${{ github.ref_name }}
-            Write-Output "::set-output name=committed::true"
+            Write-Host "::set-output name=committed::true"
           } else {
-            Write-Output "::set-output name=committed::false"
-            Write-Output "No changes to commit"
+            Write-Host "::set-output name=committed::false"
+            Write-Host "No changes to commit"
           }
   
     - name: Output commit status
       shell: pwsh
       run: |
           if ("${{ steps.commit-version.outputs.committed }}" -eq "true") {
-            Write-Output "Version file was committed and pushed"
+            Write-Host "Version file was committed and pushed"
           } else {
-            Write-Output "No changes were committed"
+            Write-Host "No changes were committed"
           }
