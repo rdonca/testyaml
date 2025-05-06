@@ -50,7 +50,7 @@ jobs:
         currentBranch: ${{ vars.BUILD_TYPE }}
         versionFilePath: ${{ vars.CER_THUMBPRINT }}
         shouldIncrementMajor: "" 
-        shouldIncrementMinor: ""
+        shouldIncrementMinor: "true"
     
     - name: Show the determined version
       run: echo "New version is ${{ steps.build.outputs.newVersionNumber }}"
