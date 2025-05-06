@@ -28,10 +28,11 @@ runs:
       shell: pwsh
       run: |
         function Get-InsightVersion {
-            # Get the directory of the current script
-            $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
-            # Go up one level from the script's directory
-            $parentDir = Split-Path -Parent $scriptDir
+            # Use the GITHUB_WORKSPACE environment variable to get the repository root directory
+            $repoRootDir = $env:GITHUB_WORKSPACE
+
+            # Go up one level from the repository root directory
+            $parentDir = Split-Path -Parent $repoRootDir
             $versionFilePath = Join-Path -Path $parentDir -ChildPath "version.txt"
             
             if (-not (Test-Path -Path $versionFilePath)) {
@@ -39,10 +40,17 @@ runs:
                 return $null
             }
 
+            # Read the version from the file
             $version = Get-Content -Path $versionFilePath -Raw
-            return $version.Trim()
+            $version = $version.Trim()
+
+            # Print the version explicitly to the console
+            Write-Output "Determined version: $version"
+
+            return $version
         }
-        
+
+        # Call the function and output the result
         $newVersion = Get-InsightVersion
         echo "Determined version: $newVersion"
 
