@@ -31,9 +31,8 @@ runs:
             # Use the GITHUB_WORKSPACE environment variable to get the repository root directory
             $repoRootDir = $env:GITHUB_WORKSPACE
 
-            # Go up one level from the repository root directory
-            $parentDir = Split-Path -Parent $repoRootDir
-            $versionFilePath = Join-Path -Path $parentDir -ChildPath "version.txt"
+            # Point directly to the version.txt in the root of the repo
+            $versionFilePath = Join-Path -Path $repoRootDir -ChildPath "version.txt"
             
             if (-not (Test-Path -Path $versionFilePath)) {
                 Write-Error "Version file not found at $versionFilePath"
