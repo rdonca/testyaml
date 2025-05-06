@@ -35,7 +35,7 @@ jobs:
           echo "Build Type: ${{ vars.BUILD_TYPE }}"
           
   build-windows:
-    runs-on: self-hosted
+    runs-on: windows-2019
     name: Windows Build Self-Hosted
     needs: determine_env
     environment: ${{ needs.determine_env.outputs.environment }}
