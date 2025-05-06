@@ -72,14 +72,14 @@ jobs:
         Write-Output "Updated version.txt with: $newVersion"
         Get-Content -Path $versionFilePath
 
-        - name: Update version.txt file
-        shell: pwsh
-        run: |
-          $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
-          $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
-          Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
-          Write-Output "Updated version.txt with: $newVersion"
-  
+    - name: Update version.txt file
+      shell: pwsh
+      run: |
+        $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
+        $newVersion = "${{ steps.build.outputs.newVersionNumber }}"
+        Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
+        Write-Output "Updated version.txt with: $newVersion"
+
     - name: Commit version update
       id: commit-version
       shell: pwsh
