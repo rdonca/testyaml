@@ -58,23 +58,7 @@ jobs:
       run: echo "New version is ${{ steps.calculate-version.outputs.newVersionNumber }}"
       shell: pwsh
 
-    - name: Update version.txt file
-      shell: pwsh
-      run: |
-        # Set the file path
-        $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
-        
-        # Get the new version from the previous step
-        $newVersion = "${{ steps.calculate-version.outputs.newVersionNumber }}"
-        
-        # Write the new version to the file
-        Set-Content -Path $versionFilePath -Value $newVersion -NoNewline
-        
-        # Verify the update
-        Write-Output "Updated version.txt with: $newVersion"
-        Get-Content -Path $versionFilePath
-
-    - name: Update version.txt file
+    - name: Update version file
       shell: pwsh
       run: |
         $versionFilePath = "$env:GITHUB_WORKSPACE/version.txt"
