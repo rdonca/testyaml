@@ -51,7 +51,7 @@ jobs:
       with:
         currentBranch: ${{ github.ref_name }}
         versionFilePath: version.txt
-        shouldIncrementMajor: true
+        shouldIncrementMajor: false
         shouldIncrementMinor: false
     
     - name: Show the determined version
