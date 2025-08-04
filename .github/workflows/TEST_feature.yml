@@ -48,7 +48,7 @@ jobs:
     - name: Print and save FEATURES variable
       shell: pwsh
       run: |
-        $json = '${{ vars.FEATURES }}'
-        Write-Host "FEATURES :"
+        $json = "${{ vars.FEATURES }}"
+        Write-Host "FEATURES:"
         Write-Host $json
         Set-Content -Path "features.json" -Value $json -Encoding UTF8
