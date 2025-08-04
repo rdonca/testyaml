@@ -46,3 +46,8 @@ jobs:
               echo $json
               Set-Content -Path "features.json" -Value $json -Encoding UTF8
           
+      - name: Show features.json content
+        shell: pwsh
+        run: |
+          Write-Host "features.json file content:"
+          Get-Content -Path "features.json" -Raw
