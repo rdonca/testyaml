@@ -33,23 +33,15 @@ jobs:
         run: |
           echo "Environment: ${{ needs.determine_env.outputs.environment }}"
           echo "Build Type: ${{ vars.BUILD_TYPE }}"
-          
-  build-windows:
-    runs-on: windows-2019
-    permissions:
-      contents: write
-    name: Windows Build Self-Hosted
-    needs: determine_env
-    environment: ${{ needs.determine_env.outputs.environment }}
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-    - name: Print and save FEATURES variable
-      shell: pwsh
-      run: |
-        $json = @'${{ vars.FEATURES }}
-          '@
+      - name: Print and save FEATURES variable
+        shell: pwsh
+        run: |
+          $json = @'${{ vars.FEATURES }}
+            '@
               echo "FEATURES:"
               echo $json
               Set-Content -Path "features.json" -Value $json -Encoding UTF8
+          
