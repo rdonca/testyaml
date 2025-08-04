@@ -68,8 +68,8 @@ jobs:
       with:
         currentBranch: ${{ github.ref_name }}
         versionFilePath: version.txt
-        shouldIncrementMajor: false
-        shouldIncrementMinor: false
+        shouldIncrementMajor: ${{ inputs.incrementMajor == 'true' }} 
+        shouldIncrementMinor: ${{ inputs.incrementMinor == 'true' }}
     
     - name: Show the determined version
       run: echo "New version is ${{ steps.calculate-version.outputs.newVersionNumber }}"

@@ -1,0 +1,54 @@
+name: TEST Feature
+description: Test features jsonn file ovveride
+
+on:
+  workflow_dispatch:
+    
+env:
+  DOTNET_NOLOGO: true                     # Disable the .NET logo
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true # Disable the .NET first time experience
+  DOTNET_CLI_TELEMETRY_OPTOUT: true       # Disable sending .NET CLI telemetry
+  
+jobs:
+  determine_env:
+    runs-on: ubuntu-latest
+    name: Determine the Environment
+    outputs:
+      environment: ${{ steps.set-env.outputs.ENVIRONMENT }}
+    steps:
+      - name: Set environment variable based on branch
+        id: set-env
+        run: |
+          # Assumes deployment branch rules in GitHub
+          echo "ENVIRONMENT=production" >> $GITHUB_ENV
+          echo "ENVIRONMENT=production" >> $GITHUB_OUTPUT
+
+  print_build_type:
+    runs-on: ubuntu-latest
+    name: Print the build type, based on the environment
+    needs: determine_env
+    environment: ${{ needs.determine_env.outputs.environment }}
+    steps:
+      - name: Print the Environment and Build Type
+        run: |
+          echo "Environment: ${{ needs.determine_env.outputs.environment }}"
+          echo "Build Type: ${{ vars.BUILD_TYPE }}"
+          
+  build-windows:
+    runs-on: windows-2019
+    permissions:
+      contents: write
+    name: Windows Build Self-Hosted
+    needs: determine_env
+    environment: ${{ needs.determine_env.outputs.environment }}
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Print and save FEATURES variable
+      shell: pwsh
+      run: |
+        $json = '${{ vars.FEATURES }}'
+        Write-Host "FEATURES :"
+        Write-Host $json
+        Set-Content -Path "features.json" -Value $json -Encoding UTF8
