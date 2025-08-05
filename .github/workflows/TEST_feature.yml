@@ -44,7 +44,7 @@ jobs:
           '@
               echo "FEATURES:"
               echo $json
-              Set-Content -Path "features.json" -Value $json -Encoding UTF8
+              Set-Content -Path "..\InsightSolution\Insight\features.json" -Value $json -Encoding UTF8
           
       - name: Show features.json content
         shell: pwsh

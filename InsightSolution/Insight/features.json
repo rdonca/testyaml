@@ -1,0 +1,10 @@
+[
+  {
+    "feature": "Python-AISTA-i",
+    "enabled": true
+  },
+  {
+    "feature": "AiIntegration",
+    "enabled": false
+  }
+]
