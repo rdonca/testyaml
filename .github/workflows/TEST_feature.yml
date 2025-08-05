@@ -50,4 +50,4 @@ jobs:
         shell: pwsh
         run: |
           Write-Host "features.json file content:"
-          Get-Content -Path "features.json" -Raw
+          Get-Content -Path ".\InsightSolution\Insight\features.json" -Raw
